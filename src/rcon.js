@@ -161,10 +161,8 @@ class SourceRCON {
                     // since response can have multiple packets, we have to keep listening until
                     // the original reaquest is present at the end of the response. This makes sure
                     // all data has been received.
-                    if(response.includes(`command "${body}"`)) {
-                        this.connection.removeListener('data', onData); // GC
-                        resolve(response); // Let's return our decoded packet data!
-                    }
+                    this.connection.removeListener('data', onData); // GC
+                    resolve(response); // Let's return our decoded packet data!
                 }
                 this.connection.removeListener('error', onError); // GC
             }
