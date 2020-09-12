@@ -147,15 +147,16 @@ class SourceRCON {
                 // Because server will response twice(0x00 and 0x02) if we send authenticate packet(0x03)
                 // but we need 0x02 for confirm
                 if (type === Protocol.SERVERDATA_AUTH && decodedPacket.type !== Protocol.SERVERDATA_AUTH_RESPONSE) {
+                    resolve('failed');
                     return;
                 } else if (type === Protocol.SERVERDATA_AUTH && decodedPacket.type === Protocol.SERVERDATA_AUTH_RESPONSE) {
-                    if (decodedPacket.id === Protocol.ID_AUTH) { // Request ID !== -1 mean success!
+                    if (decodedPacket.id !== -1) { // Request ID !== -1 mean success!
                         resolve('success');
                     } else {
                         resolve('failed');
                     }
                     this.connection.removeListener('data', onData); // GC
-                } else if(id == decodedPacket.id) {;
+                } else {
                     response = response.concat(decodedPacket.body.replace(/\n$/, '\n')); // Last new line must be gooone 
                     // since response can have multiple packets, we have to keep listening until
                     // the original reaquest is present at the end of the response. This makes sure
